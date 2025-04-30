@@ -1,0 +1,70 @@
+package org.example.week10;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+public class DaftarCatatanController {
+    @FXML
+    private TextField judulField;
+    @FXML private TextArea isiArea;
+    @FXML private TableView<Catatan> tabelCatatan;
+    @FXML private TableColumn<Catatan, String> colJudul;
+    @FXML private TableColumn<Catatan, String> colIsi;
+
+    private ObservableList<Catatan> daftar = FXCollections.observableArrayList();
+
+    @FXML
+    public void initialize() {
+        colJudul.setCellValueFactory(new PropertyValueFactory<>("judul"));
+        colIsi.setCellValueFactory(new PropertyValueFactory<>("isi"));
+        tabelCatatan.setItems(daftar);
+    }
+
+    @FXML
+    protected void simpanCatatan() {
+        Catatan selected = tabelCatatan.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            selected.setJudul(judulField.getText());
+            selected.setIsi(isiArea.getText());
+            tabelCatatan.refresh();
+            showAlert("Catatan Dirubah!");
+        } else {
+            daftar.add(new Catatan(judulField.getText(), isiArea.getText()));
+            showAlert("Catatan Ditambahkan!");
+        }
+        clearForm();
+    }
+
+    @FXML
+    protected void hapusCatatan() {
+        Catatan selected = tabelCatatan.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            daftar.remove(selected);
+            showAlert("Catatan Dihapus!");
+            clearForm();
+        }
+    }
+
+    @FXML
+    protected void pilihCatatan() {
+        Catatan selected = tabelCatatan.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            judulField.setText(selected.getJudul());
+            isiArea.setText(selected.getIsi());
+        }
+    }
+
+    private void clearForm() {
+        judulField.clear();
+        isiArea.clear();
+    }
+
+    private void showAlert(String msg) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, msg);
+        alert.showAndWait();
+    }
+}
+
